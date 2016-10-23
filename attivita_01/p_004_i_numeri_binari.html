@@ -17,6 +17,22 @@
                 <th>In base 10</th>
             </tr>
             <tr>
+                <th>Moltiplicatore</th>
+                <th>2<sup>4</sup></th>
+                <th>2<sup>3</sup></th>
+                <th>2<sup>2</sup></th>
+                <th>2<sup>1</sup></th>
+                <th>2<sup>0</sup></th>
+            </tr>
+            <tr>
+                <th>Moltiplicatore</th>
+                <th>16</th>
+                <th>8</th>
+                <th>4</th>
+                <th>2</th>
+                <th>1</th>
+            </tr>
+            <tr>
                 <td></td>
                 <td>
                     <div id="carta_2^4" style="width: 100px; height: 100px; position: relative; overflow: hidden; cursor: default;">
@@ -93,7 +109,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Numero</td>
+                <th>(Numero)<sub>2</sub></th>
                 <td style="text-align:center;">
                     <input id="d4" type="number" name="quantity" min="0" max="1" value="1">
                 </td>
@@ -111,6 +127,27 @@
                 </td>
                 <td style="text-align:center;" id="valore">31</td>
             </tr>
+			<tr>
+				<th>Algebricamente</th>
+				<td colspan="6">
+					(<span id="b4">1</span>
+					<span id="b3">1</span>
+					<span id="b2">1</span>
+					<span id="b1">1</span>
+					<span id="b0">1</span>)<sub>2</sub>
+					=
+					<span id="v4">1</span> x 16 +
+					<span id="v3">1</span> x  8 +
+					<span id="v2">1</span> x  4 +
+					<span id="v1">1</span> x  2 +
+					<span id="v0">1</span> x  1 =
+					
+					<span id="somma_mintermini">16 + 8 + 4 + 2 + 1</span>
+					= 
+					(<span id="decimale">31</span>)<sub>10</sub>
+				</td>
+			</tr>
+			
         </table>
         <script type="text/javascript">
 		
@@ -180,9 +217,10 @@
 					 2 * Number(document.getElementById("d1").value) +
 					 1 * Number(document.getElementById("d0").value);
 				document.getElementById("valore").innerHTML = numeroInBase10;
+				document.getElementById("decimale").innerHTML = numeroInBase10;
 			}
 			
-			var aggiornaVista = function(evt) {
+			var aggiornaVistaCarte = function(evt) {
 				var posizione = evt.target.id[1];
 				var carta = document.getElementById("carta_2^" + posizione);
 				if (evt.target.value == 0) {
@@ -190,6 +228,34 @@
 				} else {
 					carta.replaceChild(immagini[Number(posizione)], carta.firstElementChild);
 				}
+			};
+			
+			var aggiornaVistaAlgebrica = function(evt) {
+				var posizione = evt.target.id[1];
+				var coefficiente = document.getElementById("v" + posizione);
+				var cifraBinaria = document.getElementById("b" + posizione);
+				if (evt.target.value == 0) {
+					coefficiente.innerHTML = 0;
+					cifraBinaria.innerHTML = 0;
+				} else {
+					coefficiente.innerHTML = 1;
+					cifraBinaria.innerHTML = 1;
+				}
+				var espressione = document.getElementById("d4").value == "1"?"16":"";
+				for (var pos = 3; pos >= 0; pos--) {
+					if (document.getElementById("d" + pos).value == "1") {
+						if (espressione.length != 0) {
+							espressione += " + ";
+						}
+						espressione += Math.pow(2, pos);
+					}
+				}
+				document.getElementById("somma_mintermini").innerHTML = (espressione.length === 0)?0:espressione;
+			};
+			
+			var aggiornaVista = function(evt) {
+				aggiornaVistaCarte(evt);
+				aggiornaVistaAlgebrica(evt);
 			};	
 			
 			var aggiorna = function(evt) {
