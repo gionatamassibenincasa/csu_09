@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="generator"
+    content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39" />
+    <title>Conversione di base</title>
+    <meta charset="UTF-8" />
+    <style>
+                table {
+                        table-layout: fixed;
+                        width:  300px;
+                        }
+                table, th, td {
+                        font-family: monospace;
+                        border-collapse: collapse;
+                        text-align: right; }
+                th, td {
+                        width: 30 px;
+                        height: 30px;
+                        }
+                td.dividendo {/* top | right | bottom | left */
+                                                border-style: none solid solid none;
+                }
+                td.divisore {/* top | right | bottom | left */
+                                                border-style: none none solid solid;
+                                                //color: blue;
+                }
+                td.resto {/* top | right | bottom | left */
+                                                border-style: solid solid none none;
+                                                color: darkred;
+                }
+        
+</style>
+    <script>
+function converti(base) {
+        var N = parseInt(document.getElementById("numero").value);
+        var dividendo = N;
+        
+        var tabella = document.getElementById("tab_divisioni_successive");
+		while (tabella.firstChild) {
+			tabella.removeChild(tabella.firstChild);
+		}
+		
+        var posizione = 0;
+        var inAltraBase = "";
+        
+		var tr = document.createElement("tr");
+        var tdDividendo = document.createElement("td");
+        tdDividendo.innerHTML = dividendo;
+        tdDividendo.className = "dividendo";
+        tr.appendChild(tdDividendo);
+                                
+        do {
+                var tdDivisore = document.createElement("td");
+                tdDivisore.innerHTML = base;
+                tdDivisore.className = "divisore";
+                tr.appendChild(tdDivisore);
+                tabella.appendChild(tr);
+
+                tr = document.createElement("tr");
+                for (var pad = 0; pad < posizione; pad++) {
+                        var td = document.createElement("td");
+                        tr.appendChild(td);
+                }
+
+                var resto = dividendo % base;
+                dividendo = (dividendo - resto) / base;
+                inAltraBase = resto + inAltraBase;
+                
+                var tdResto = document.createElement("td");
+                tdResto.innerHTML = resto;
+                tdResto.className = "resto";
+                tr.appendChild(tdResto);
+                var tdQuoziente = document.createElement("td");
+                tdQuoziente.innerHTML = dividendo;
+                tdQuoziente.className = (dividendo==0)?"":"divisore";
+                tr.appendChild(tdQuoziente);
+                
+                posizione++;
+				console.log(tabella);
+        } while (dividendo > 0);
+		
+		tabella.appendChild(tr);
+		document.getElementById("altra_base").innerHTML = inAltraBase;
+		
+}
+	</script>
+  </head>
+  <body>(
+  <form>
+  <input id="numero" type="number" min="0" />)
+  <sub>10</sub> = (
+  <span id="altra_base"></span>)
+  <sub>2</sub> 
+  <button onclick="converti(2)">Converti</button></form>
+  <table id="tab_divisioni_successive"></table></body>
+</html>
