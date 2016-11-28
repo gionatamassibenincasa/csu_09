@@ -27,19 +27,33 @@
                 }
                 td.resto {/* top | right | bottom | left */
                                                 border-style: solid solid none none;
-                                                color: darkred;
-                }
-        
-</style>
+                                                color: blue;
+                }    
+	</style>
+  </head>
+  <body>
+	<p>(<input id="numero" type="number" min="0"
+	onkeypress="handleKeyPress(event)"/>)<sub>10</sub> = 
+  (<span id="altra_base"></span>)<sub>2</sub> 
+  <button onclick="converti(2)">Converti</button></p>
+  <table id="tab_divisioni_successive"></table></body>
+  
     <script>
+function handleKeyPress(e){
+ var key=e.keyCode || e.which;
+  if (key==13){
+     converti(2);
+  }
+}
 function converti(base) {
         var N = parseInt(document.getElementById("numero").value);
         var dividendo = N;
         
-        var tabella = document.getElementById("tab_divisioni_successive");
+		var tabella = document.getElementById("tab_divisioni_successive");
 		while (tabella.firstChild) {
 			tabella.removeChild(tabella.firstChild);
 		}
+		tabella.style.width = Math.round(window.innerWidth/2) + "px";
 		
         var posizione = 0;
         var inAltraBase = "";
@@ -73,25 +87,16 @@ function converti(base) {
                 tr.appendChild(tdResto);
                 var tdQuoziente = document.createElement("td");
                 tdQuoziente.innerHTML = dividendo;
-                tdQuoziente.className = (dividendo==0)?"":"divisore";
+                if (dividendo!=0) {
+					tdQuoziente.className = "divisore";
+				}
                 tr.appendChild(tdQuoziente);
                 
                 posizione++;
-				console.log(tabella);
         } while (dividendo > 0);
 		
 		tabella.appendChild(tr);
-		document.getElementById("altra_base").innerHTML = inAltraBase;
-		
+		document.getElementById("altra_base").innerHTML = inAltraBase;	
 }
 	</script>
-  </head>
-  <body>(
-  <form>
-  <input id="numero" type="number" min="0" />)
-  <sub>10</sub> = (
-  <span id="altra_base"></span>)
-  <sub>2</sub> 
-  <button onclick="converti(2)">Converti</button></form>
-  <table id="tab_divisioni_successive"></table></body>
 </html>
