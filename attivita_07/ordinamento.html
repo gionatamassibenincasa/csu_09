@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="generator"
+    content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39" />
+    <title>Algoritmi di ordinamento</title>
+    <meta charset="UTF-8" />
+    <style>
+                table {
+                        table-layout: fixed;
+                        }
+                table, th, td {
+                        font-family: monospace;
+                        border-collapse: collapse;
+                        text-align: center;
+						border: 1px solid black}
+                th, td {
+                        width: 30 px;
+                        height: 30px;
+                        }
+	</style>
+  </head>
+  <body>
+	<p>Immettere una sequenza di numeri naturali.</p>
+	<p>Sequenza: (<input id="sequenza" type="text"
+	onkeypress="handleKeyPress(event)"/>)</p>
+  <p><select id="algoritmo">
+    <option value="selection" selected>Algoritmo di ordinamento per selezione (Selection sort)</option>
+    <option value="insertion">Algoritmo di ordinamento per inserimento (Insertion sort)</option>
+    <option value="bubble">Algoritmo di ordinamento a bolle (Bubble sort)</option>
+    <option value="merge">Algoritmo di ordinamento per fusione (Mergesort)</option>
+    <option value="quick">Algoritmo di ordinamento veloce (Quicksort)</option>
+  </select></p>
+  <p><button onclick="ordina()">Ordina!</button></p>
+  <table id="sequenze">
+	<thead id="intestazione" style="visibility: hidden">
+		<th>Iterazione</th>
+		<th>Sequenza</th>
+		<th>Confronti iter</th>
+		<th>Scambi iter.</th>
+		<th>Confronti</th>
+		<th>Scambi</th>
+	</thead>
+	<tbody id="corpo">
+	</tbody>
+  </table>
+</body>
+  
+    <script>
+function handleKeyPress(e){
+ var key=e.keyCode || e.which;
+  if (key==13){
+     ordina();
+  }
+}
+function ordina() {
+	var sequenza = 
+		analizza(document.getElementById('sequenza').value, sequenza);
+		
+	ripristinaTabella();
+	var nomeAlgoritmo = document.getElementById('algoritmo').value;
+	console.log('Nome algoritmo: ', nomeAlgoritmo);
+	window[nomeAlgoritmo](sequenza);
+}
+function analizza(stringa) {
+	var ret = [];
+	var pos = 0;
+	while(pos < stringa.length) {
+		if(stringa[pos] >= '0' && stringa[pos] <= '9') {
+			var ultimoNumero = pos + 1;
+			while(ultimoNumero <= stringa.length && stringa[ultimoNumero] >= '0' && stringa[ultimoNumero] <= '9') {
+				ultimoNumero++;
+			}
+			ret.push(parseInt(stringa.slice(pos, ultimoNumero)));
+			pos = ultimoNumero;
+		} else {
+			pos++;
+		}
+	}
+	return ret;
+}
+function selection(sequenza) {
+	var nConfronti,
+		nScambi,
+		totConfronti = 0,
+		totScambi = 0;
+		
+	var trovaMinimo = function(inizioNonOrdinata) {
+		var indiceMinimo = inizioNonOrdinata;
+		for (var j = inizioNonOrdinata+1; j < sequenza.length; j++) {
+			if (sequenza[j] < sequenza[indiceMinimo]) {
+				indiceMinimo = j;
+			}
+			nConfronti++;
+		}
+		return indiceMinimo;
+	};
+	var scambia = function(i, j) {
+		if (i != j) {
+			var minimo = sequenza[j];
+			sequenza[j] = sequenza[i];
+			sequenza[i] = minimo;
+			nScambi++;
+		}
+	};
+	var iterazione = function(primoNonOrdinato) {
+			var indiceMinimo = trovaMinimo(primoNonOrdinato);
+			scambia(primoNonOrdinato, indiceMinimo);			
+	};
+	
+	mostraIntestazioni();
+	// Sequenze peggiori: 5 1 2 3 4
+	for(var primoNonOrdinato = 0; primoNonOrdinato < sequenza.length - 1; primoNonOrdinato++) {
+		nConfronti = 0; nScambi = 0;
+		iterazione(primoNonOrdinato);
+		totConfronti += nConfronti; totScambi += nScambi;
+		aggiungiRiga(primoNonOrdinato + 1, sequenza, nConfronti, nScambi, totConfronti, totScambi);
+	};
+}
+function mostraIntestazioni() {
+	document.getElementById('intestazione').style.visibility = 'visible';
+}
+function aggiungiRiga(iterazione, sequenza, nConfronti, nScambi, totConfronti, totScambi) {
+	var tabella = document.getElementById("corpo");
+	var tr = document.createElement("tr");
+	var aggiungiNumero = function(valore) {
+        var td = document.createElement("td");
+        td.innerHTML = valore;
+        tr.appendChild(td);
+	};
+	var aggiungiSequenza = function(sequenza) {
+        var td = document.createElement("td");
+		if (sequenza.length) {
+			td.innerHTML = sequenza[0];
+		}
+		for(var j = 1; j < sequenza.length; j++) {
+			td.innerHTML += ' ' + sequenza[j];
+		}
+        tr.appendChild(td);
+	}
+	aggiungiNumero(iterazione);
+	aggiungiSequenza(sequenza);
+	aggiungiNumero(nConfronti);
+	aggiungiNumero(nScambi);
+	aggiungiNumero(totConfronti);
+	aggiungiNumero(totScambi);
+	tabella.appendChild(tr);
+}
+function ripristinaTabella() {
+	var tabella = document.getElementById('corpo');
+	while (tabella.firstChild) {
+		tabella.removeChild(tabella.firstChild);
+	}
+	document.getElementById('intestazione').style.visibility = 'hidden';
+}
+function converti(base) {
+        var N = parseInt(document.getElementById("numero").value);
+        var dividendo = N;
+        
+		var tabella = document.getElementById("tab_divisioni_successive");
+		while (tabella.firstChild) {
+			tabella.removeChild(tabella.firstChild);
+		}
+		tabella.style.width = Math.round(window.innerWidth/2) + "px";
+		
+        var posizione = 0;
+        var inAltraBase = "";
+        
+		var tr = document.createElement("tr");
+        var tdDividendo = document.createElement("td");
+        tdDividendo.innerHTML = dividendo;
+        tdDividendo.className = "dividendo";
+        tr.appendChild(tdDividendo);
+                                
+        do {
+                var tdDivisore = document.createElement("td");
+                tdDivisore.innerHTML = base;
+                tdDivisore.className = "divisore";
+                tr.appendChild(tdDivisore);
+                tabella.appendChild(tr);
+
+                tr = document.createElement("tr");
+                for (var pad = 0; pad < posizione; pad++) {
+                        var td = document.createElement("td");
+                        tr.appendChild(td);
+                }
+
+                var resto = dividendo % base;
+                dividendo = (dividendo - resto) / base;
+                inAltraBase = resto + inAltraBase;
+                
+                var tdResto = document.createElement("td");
+                tdResto.innerHTML = resto;
+                tdResto.className = "resto";
+                tr.appendChild(tdResto);
+                var tdQuoziente = document.createElement("td");
+                tdQuoziente.innerHTML = dividendo;
+                if (dividendo!=0) {
+					tdQuoziente.className = "divisore";
+				}
+                tr.appendChild(tdQuoziente);
+                
+                posizione++;
+        } while (dividendo > 0);
+		
+		tabella.appendChild(tr);
+		document.getElementById("altra_base").innerHTML = inAltraBase;	
+}
+	</script>
+</html>
